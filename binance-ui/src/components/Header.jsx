@@ -25,7 +25,7 @@ export default function Header() {
       <div className="hidden md:flex bg-gradient-to-r from-gray-50 to-blue-50 border-b border-gray-200 text-sm text-gray-700">
         <div className="max-w-full px-4 md:px-6 py-2 flex justify-between items-center w-full">
           <div className="flex gap-4 md:gap-6">
-            <button onClick={() => navigate('/')} className="hover:text-yellow-500 transition cursor-pointer font-medium text-xs md:text-sm">Crypto Prices</button>
+            <button onClick={() => navigate('/')} className="hover:text-yellow-500 transition cursor-pointer font-medium text-xs md:text-sm">DUBAI Prices</button>
             <button onClick={() => navigate('/p2p')} className="hover:text-yellow-500 transition cursor-pointer font-medium text-xs md:text-sm">P2P Trading</button>
             <button className="hover:text-yellow-500 transition cursor-pointer font-medium text-xs md:text-sm">Learning Hub</button>
             <button className="hover:text-yellow-500 transition cursor-pointer font-medium text-xs md:text-sm">Security</button>
@@ -43,7 +43,7 @@ export default function Header() {
         {/* Logo */}
         <button onClick={() => navigate('/')} className="flex items-center gap-2 text-xl md:text-2xl font-bold hover:opacity-80 transition">
           <Bitcoin size={28} className="text-yellow-500" />
-          <span className="bg-gradient-to-r from-yellow-500 to-orange-500 bg-clip-text text-transparent hidden sm:inline">CryptoP2P</span>
+          <span className="bg-gradient-to-r from-yellow-500 to-orange-500 bg-clip-text text-transparent hidden sm:inline">DUBAIP2P</span>
           <span className="bg-gradient-to-r from-yellow-500 to-orange-500 bg-clip-text text-transparent sm:hidden">C2P</span>
         </button>
         
@@ -53,7 +53,7 @@ export default function Header() {
             onClick={() => navigate('/')}
             className={`flex items-center gap-1 transition ${isActive('/') ? 'text-black border-b-2 border-yellow-400 pb-1' : 'hover:text-yellow-500'}`}
           >
-            <TrendingUp size={18} /> Buy Crypto
+            <TrendingUp size={18} /> Buy DUBAI
           </button>
           <button 
             onClick={() => navigate('/p2p')}
@@ -159,7 +159,7 @@ export default function Header() {
               }}
               className={`w-full text-left px-4 py-2 rounded flex items-center gap-2 transition ${isActive('/') ? 'bg-yellow-100 text-black font-semibold' : 'text-gray-700 hover:bg-gray-100'}`}
             >
-              <TrendingUp size={18} /> Buy Crypto
+              <TrendingUp size={18} /> Buy DUBAI
             </button>
             <button 
               onClick={() => {

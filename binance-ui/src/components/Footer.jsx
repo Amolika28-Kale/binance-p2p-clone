@@ -10,9 +10,9 @@ export default function Footer() {
           {/* Brand */}
           <div className="col-span-1 sm:col-span-2 md:col-span-1">
             <p className="font-semibold text-yellow-400 mb-4 flex items-center gap-2">
-              <Bitcoin size={20} /> CryptoP2P
+              <Bitcoin size={20} /> DUBAIP2P
             </p>
-            <p className="text-xs md:text-sm text-gray-400 mb-4">Global peer-to-peer crypto trading platform</p>
+            <p className="text-xs md:text-sm text-gray-400 mb-4">Global peer-to-peer DUBAI trading platform</p>
           </div>
 
           {/* Products */}
@@ -20,7 +20,7 @@ export default function Footer() {
             <p className="font-semibold text-yellow-400 mb-4 text-sm md:text-base">Products</p>
             <ul className="space-y-2 text-xs md:text-sm text-gray-400">
               <li><a href="#" className="hover:text-yellow-400 transition">P2P Trading</a></li>
-              <li><a href="#" className="hover:text-yellow-400 transition">Buy Crypto</a></li>
+              <li><a href="#" className="hover:text-yellow-400 transition">Buy DUBAI</a></li>
               <li><a href="#" className="hover:text-yellow-400 transition">Wallet</a></li>
               <li><a href="#" className="hover:text-yellow-400 transition">Exchange</a></li>
             </ul>
@@ -79,7 +79,7 @@ export default function Footer() {
 
       {/* Bottom Footer */}
       <div className="border-t border-yellow-500/20 bg-black/50 px-4 md:px-6 py-4 md:py-6 text-center">
-        <p className="text-xs md:text-sm text-gray-400">&copy; 2026 CryptoP2P. All rights reserved. | Disclaimer: Cryptocurrency trading is highly volatile.</p>
+        <p className="text-xs md:text-sm text-gray-400">&copy; 2026 DUBAIP2P. All rights reserved. | Disclaimer: DUBAIcurrency trading is highly volatile.</p>
       </div>
     </footer>
   );

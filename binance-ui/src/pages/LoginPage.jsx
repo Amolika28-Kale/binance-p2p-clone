@@ -39,7 +39,7 @@ export default function LoginPage() {
         <div className="max-w-7xl mx-auto">
           <Link to="/" className="text-2xl font-bold text-black hover:opacity-80 transition">
   <h1 className="text-xl md:text-2xl font-black tracking-tighter text-black">
-              CRYPTO<span className="text-yellow-500">P2P</span>
+              DUBAI<span className="text-yellow-500">P2P</span>
             </h1>          </Link>
         </div>
       </div>

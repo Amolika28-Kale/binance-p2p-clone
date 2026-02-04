@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
-  Menu, X, ShieldCheck, Zap, Wallet, 
+  Menu, X, Zap, Wallet, 
   BarChart3, Clock, Headphones, ArrowRight 
 } from 'lucide-react';
 
@@ -9,6 +9,7 @@ export default function LandingPage() {
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
+  // Updated features array: Escrow Protection removed
   const features = [
     { 
       title: "Multiple Payments", 
@@ -22,13 +23,8 @@ export default function LandingPage() {
     },
     { 
       title: "Instant Settlement", 
-      desc: "Fastest crypto release mechanism for a smooth experience.", 
+      desc: "Fastest digital asset release mechanism for a smooth experience.", 
       icon: <Zap className="text-blue-500" size={32} /> 
-    },
-    { 
-      title: "Escrow Protection", 
-      desc: "Your funds are held in a secure escrow until the trade is verified.", 
-      icon: <ShieldCheck className="text-purple-500" size={32} /> 
     },
     { 
       title: "24/7 Priority Support", 
@@ -53,7 +49,7 @@ export default function LandingPage() {
               <Zap size={24} className="text-black fill-black" />
             </div>
             <h1 className="text-xl md:text-2xl font-black tracking-tighter text-white">
-              CRYPTO<span className="text-yellow-500">P2P</span>
+              DUBAI<span className="text-yellow-500">P2P</span>
             </h1>
           </div>
 
@@ -85,7 +81,6 @@ export default function LandingPage() {
 
       {/* --- Hero Section --- */}
       <section className="relative pt-40 pb-20 px-4 overflow-hidden">
-        {/* Animated Background Blobs */}
         <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-yellow-500/10 blur-[120px] rounded-full animate-pulse"></div>
         <div className="absolute bottom-[-10%] right-[-10%] w-[30%] h-[30%] bg-blue-500/10 blur-[100px] rounded-full animate-pulse delay-700"></div>
 
@@ -100,7 +95,7 @@ export default function LandingPage() {
             </div>
             
             <h2 className="text-5xl sm:text-6xl lg:text-8xl font-black tracking-tight leading-[0.9] text-white">
-              The Smarter Way To Trade <span className="text-yellow-500">USDT.</span>
+              The smartest way to buy and sell USDT
             </h2>
             
             <p className="text-[#848e9c] text-lg sm:text-xl max-w-xl mx-auto lg:mx-0 leading-relaxed font-medium">
@@ -112,7 +107,7 @@ export default function LandingPage() {
                 onClick={() => navigate('/p2p')} 
                 className="group px-10 py-5 bg-yellow-500 text-black font-bold rounded-xl text-lg hover:bg-yellow-400 transition-all shadow-[0_8px_30px_rgb(252,213,53,0.2)] flex items-center justify-center gap-2"
               >
-                Start Trading <ArrowRight className="group-hover:translate-x-1 transition-transform" />
+               Buy/sell USDT <ArrowRight className="group-hover:translate-x-1 transition-transform" />
               </button>
               <button className="px-10 py-5 border border-[#2b3139] rounded-xl font-bold text-white hover:bg-white/5 transition-all text-lg backdrop-blur-sm">
                 View Live Ads
@@ -163,6 +158,7 @@ export default function LandingPage() {
           <div className="h-px bg-[#2b3139] flex-grow mx-8 hidden lg:block"></div>
         </div>
 
+        {/* Updated Grid: Now shows 5 features cleanly */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {features.map((f, i) => (
             <div key={i} className="group p-10 rounded-[2rem] bg-[#1e2329]/50 border border-[#2b3139] hover:border-yellow-500/50 transition-all duration-500 hover:-translate-y-2">
@@ -181,7 +177,7 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
           <div className="flex items-center gap-2 opacity-50">
             <Zap size={20} />
-            <span className="font-bold tracking-tight">CRYPTO P2P 2026</span>
+            <span className="font-bold tracking-tight">DUBAI P2P 2026</span>
           </div>
           <div className="flex gap-8 text-[#848e9c] text-sm font-semibold">
             <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
