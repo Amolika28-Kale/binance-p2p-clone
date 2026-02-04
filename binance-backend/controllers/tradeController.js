@@ -2,74 +2,73 @@ const Trade = require('../models/Trade');
 const Ad = require('../models/Ad');
 const User = require('../models/User');
 
-// Create trade (initiate order)
+// Updated controllers/tradeController.js
 exports.createTrade = async (req, res) => {
   try {
     const { adId, amount, paymentMethod } = req.body;
 
     if (!adId || !amount || !paymentMethod) {
-      return res.status(400).json({ message: 'Please provide all required fields' });
+      return res.status(400).json({ success: false, message: 'Please provide all required fields' });
     }
 
     const ad = await Ad.findById(adId);
-    if (!ad) {
-      return res.status(404).json({ message: 'Ad not found' });
+    if (!ad || !ad.isActive) {
+      return res.status(400).json({ success: false, message: 'This advertisement is no longer active' });
     }
 
-    if (!ad.isActive) {
-      return res.status(400).json({ message: 'Ad is no longer active' });
+    // Convert everything to Numbers to prevent string comparison errors
+    const tradeAmountQuantity = Number(amount);
+    const adPrice = Number(ad.price);
+    const minLimit = Number(ad.minOrderAmount);
+    const maxLimit = Number(ad.maxOrderAmount);
+
+    // Calculate total fiat value
+    const totalFiatValue = tradeAmountQuantity * adPrice;
+
+    // Buffer of 0.01 to handle JS floating point precision issues
+    if (totalFiatValue < (minLimit - 0.01) || totalFiatValue > (maxLimit + 0.01)) {
+      return res.status(400).json({ 
+        success: false, 
+        message: `Amount must be between ${minLimit} and ${maxLimit}` 
+      });
     }
 
-    if (amount < ad.minOrderAmount || amount > ad.maxOrderAmount) {
-      return res.status(400).json({ message: `Amount must be between ${ad.minOrderAmount} and ${ad.maxOrderAmount}` });
-    }
-
-    if (amount > ad.availableAmount) {
-      return res.status(400).json({ message: 'Insufficient available amount' });
+    if (tradeAmountQuantity > Number(ad.availableAmount)) {
+      return res.status(400).json({ success: false, message: 'Insufficient quantity available' });
     }
 
     const buyer = ad.type === 'SELL' ? req.userId : ad.advertiser.toString();
     const seller = ad.type === 'BUY' ? req.userId : ad.advertiser.toString();
 
     if (buyer === seller) {
-      return res.status(400).json({ message: 'Cannot trade with yourself' });
+      return res.status(400).json({ success: false, message: 'You cannot trade with yourself' });
     }
-
-    const totalPrice = amount * ad.price;
-    const expiresAt = new Date(Date.now() + ad.timeLimit * 60000);
 
     const trade = new Trade({
       ad: adId,
       buyer,
       seller,
-      amount,
-      price: ad.price,
-      totalPrice,
+      amount: tradeAmountQuantity,
+      price: adPrice,
+      totalPrice: totalFiatValue,
       paymentMethod,
-      expiresAt
+      expiresAt: new Date(Date.now() + ad.timeLimit * 60000)
     });
 
-    await trade.save();
-
-    // Reduce available amount in ad
-    ad.availableAmount -= amount;
-    if (ad.availableAmount === 0) {
-      ad.isActive = false;
-    }
+    // Escrow Lock: Deduct quantity from Ad immediately
+    ad.availableAmount -= tradeAmountQuantity;
+    if (ad.availableAmount <= 0.001) ad.isActive = false;
+    
     await ad.save();
+    await trade.save();
 
     const populatedTrade = await trade.populate('buyer seller', 'firstName lastName email phoneNumber');
 
-    res.status(201).json({
-      success: true,
-      message: 'Trade initiated successfully',
-      trade: populatedTrade
-    });
+    res.status(201).json({ success: true, trade: populatedTrade });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
-
 // Get trades for current user
 exports.getMyTrades = async (req, res) => {
   try {
@@ -129,65 +128,61 @@ exports.getTradeById = async (req, res) => {
   }
 };
 
-// Update trade status
+// controllers/tradeController.js मध्ये बदल करा
+
+// Update trade status (Payment Notification & Asset Release)
+// Update trade status (Payment Notification & Asset Release)
 exports.updateTradeStatus = async (req, res) => {
   try {
     const { status } = req.body;
-
     const trade = await Trade.findById(req.params.id);
 
-    if (!trade) {
-      return res.status(404).json({ message: 'Trade not found' });
+    if (!trade) return res.status(404).json({ success: false, message: 'Trade not found' });
+    if (trade.status === 'COMPLETED' || trade.status === 'CANCELLED') {
+        return res.status(400).json({ message: "Trade is already finalized" });
     }
 
-    if (trade.buyer.toString() !== req.userId && trade.seller.toString() !== req.userId) {
-      return res.status(403).json({ message: 'Not authorized to update this trade' });
+    // 1. Buyer marks as 'PAYMENT_SENT'
+    if (status.toUpperCase() === 'PAYMENT_SENT') {
+      if (trade.buyer.toString() !== req.userId) return res.status(403).json({ message: 'Only buyer can mark as paid' });
+      trade.status = 'PAYMENT_SENT';
     }
 
-    trade.status = status.toUpperCase();
-
+    // 2. Seller marks as 'COMPLETED' (Atomic Balance Transfer)
     if (status.toUpperCase() === 'COMPLETED') {
+      if (trade.seller.toString() !== req.userId) return res.status(403).json({ message: 'Only seller can release assets' });
+
+      // Move funds to buyer wallet and update trade counts in ONE step
+      await User.findByIdAndUpdate(trade.buyer, { 
+        $inc: { walletBalance: trade.amount, completedTrades: 1 } 
+      });
+      await User.findByIdAndUpdate(trade.seller, { 
+        $inc: { completedTrades: 1 } 
+      });
+
+      trade.status = 'COMPLETED';
       trade.completedAt = Date.now();
-      
-      // Update user stats
-      const buyer = await User.findById(trade.buyer);
-      const seller = await User.findById(trade.seller);
-      
-      buyer.completedTrades += 1;
-      seller.completedTrades += 1;
-      
-      await buyer.save();
-      await seller.save();
+    }
+
+    // 3. Trade 'CANCELLED' (Return funds to Ad)
+    if (status.toUpperCase() === 'CANCELLED') {
+      await Ad.findByIdAndUpdate(trade.ad, { $inc: { availableAmount: trade.amount }, isActive: true });
+      trade.status = 'CANCELLED';
     }
 
     await trade.save();
-
-    const populatedTrade = await trade.populate('buyer seller', 'firstName lastName email');
-
-    res.status(200).json({
-      success: true,
-      message: 'Trade status updated successfully',
-      trade: populatedTrade
-    });
+    res.status(200).json({ success: true, trade });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
-
-// Add message to chat
+// Add message to chat history
 exports.addMessage = async (req, res) => {
   try {
     const { message } = req.body;
-
     const trade = await Trade.findById(req.params.id);
 
-    if (!trade) {
-      return res.status(404).json({ message: 'Trade not found' });
-    }
-
-    if (trade.buyer.toString() !== req.userId && trade.seller.toString() !== req.userId) {
-      return res.status(403).json({ message: 'Not authorized to message in this trade' });
-    }
+    if (!trade) return res.status(404).json({ message: 'Trade not found' });
 
     trade.chatHistory.push({
       sender: req.userId,
@@ -196,14 +191,9 @@ exports.addMessage = async (req, res) => {
     });
 
     await trade.save();
-
     const populatedTrade = await trade.populate('buyer seller', 'firstName lastName email');
 
-    res.status(200).json({
-      success: true,
-      message: 'Message added successfully',
-      trade: populatedTrade
-    });
+    res.status(200).json({ success: true, trade: populatedTrade });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

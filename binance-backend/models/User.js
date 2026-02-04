@@ -69,6 +69,10 @@ const userSchema = new mongoose.Schema({
     enum: ['pending', 'verified', 'rejected'],
     default: 'pending'
   },
+  walletBalance: {
+    type: Number,
+    default: 0, // Default balance starts at 0 USDT
+  },
   createdAt: {
     type: Date,
     default: Date.now
