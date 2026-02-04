@@ -2,85 +2,93 @@ import React from 'react';
 import { Bitcoin, Twitter, Mail, MessageCircle, Youtube } from 'lucide-react';
 
 export default function Footer() {
+  const footerLinks = [
+    {
+      title: "Products",
+      links: ["P2P Trading", "Buy DUBAI", "Wallet", "Exchange"]
+    },
+    {
+      title: "Learn",
+      links: ["Academy", "Blog", "Guides", "Support"]
+    },
+    {
+      title: "Platform",
+      links: ["Security", "API Docs", "Partners", "Careers"]
+    },
+    {
+      title: "Legal",
+      links: ["Terms", "Privacy", "Risk Warning", "Contact"]
+    }
+  ];
+
   return (
-    <footer className="bg-gradient-to-b from-gray-900 to-black text-white border-t border-yellow-500/20 mt-20">
-      {/* Main Footer */}
-      <div className="max-w-full px-4 md:px-6 py-8 md:py-12">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-6 md:gap-8 mb-8 md:mb-12">
-          {/* Brand */}
-          <div className="col-span-1 sm:col-span-2 md:col-span-1">
-            <p className="font-semibold text-yellow-400 mb-4 flex items-center gap-2">
-              <Bitcoin size={20} /> DUBAIP2P
-            </p>
-            <p className="text-xs md:text-sm text-gray-400 mb-4">Global peer-to-peer DUBAI trading platform</p>
-          </div>
-
-          {/* Products */}
-          <div>
-            <p className="font-semibold text-yellow-400 mb-4 text-sm md:text-base">Products</p>
-            <ul className="space-y-2 text-xs md:text-sm text-gray-400">
-              <li><a href="#" className="hover:text-yellow-400 transition">P2P Trading</a></li>
-              <li><a href="#" className="hover:text-yellow-400 transition">Buy DUBAI</a></li>
-              <li><a href="#" className="hover:text-yellow-400 transition">Wallet</a></li>
-              <li><a href="#" className="hover:text-yellow-400 transition">Exchange</a></li>
-            </ul>
-          </div>
-
-          {/* Learn */}
-          <div>
-            <p className="font-semibold text-yellow-400 mb-4 text-sm md:text-base">Learn</p>
-            <ul className="space-y-2 text-xs md:text-sm text-gray-400">
-              <li><a href="#" className="hover:text-yellow-400 transition">Academy</a></li>
-              <li><a href="#" className="hover:text-yellow-400 transition">Blog</a></li>
-              <li><a href="#" className="hover:text-yellow-400 transition">Guides</a></li>
-              <li><a href="#" className="hover:text-yellow-400 transition">Support</a></li>
-            </ul>
-          </div>
-
-          {/* Platform */}
-          <div>
-            <p className="font-semibold text-yellow-400 mb-4 text-sm md:text-base">Platform</p>
-            <ul className="space-y-2 text-xs md:text-sm text-gray-400">
-              <li><a href="#" className="hover:text-yellow-400 transition">Security</a></li>
-              <li><a href="#" className="hover:text-yellow-400 transition">API Docs</a></li>
-              <li><a href="#" className="hover:text-yellow-400 transition">Partners</a></li>
-              <li><a href="#" className="hover:text-yellow-400 transition">Careers</a></li>
-            </ul>
-          </div>
-
-          {/* Legal */}
-          <div>
-            <p className="font-semibold text-yellow-400 mb-4 text-sm md:text-base">Legal</p>
-            <ul className="space-y-2 text-xs md:text-sm text-gray-400">
-              <li><a href="#" className="hover:text-yellow-400 transition">Terms</a></li>
-              <li><a href="#" className="hover:text-yellow-400 transition">Privacy</a></li>
-              <li><a href="#" className="hover:text-yellow-400 transition">Risk Warning</a></li>
-              <li><a href="#" className="hover:text-yellow-400 transition">Contact</a></li>
-            </ul>
-          </div>
-        </div>
+    <footer className="bg-gradient-to-b from-gray-900 to-black text-white border-t border-yellow-500/20 mt-12 md:mt-20">
+      <div className="max-w-7xl mx-auto px-6 py-10 md:py-16">
         
-        {/* Social Links */}
-        <div className="border-t border-gray-700 pt-6 md:pt-8 flex justify-center gap-6 mb-8">
-          <a href="#" className="text-gray-400 hover:text-yellow-400 transition transform hover:scale-110">
-            <Twitter size={24} />
-          </a>
-          <a href="#" className="text-gray-400 hover:text-yellow-400 transition transform hover:scale-110">
-            <Mail size={24} />
-          </a>
-          <a href="#" className="text-gray-400 hover:text-yellow-400 transition transform hover:scale-110">
-            <MessageCircle size={24} />
-          </a>
-          <a href="#" className="text-gray-400 hover:text-yellow-400 transition transform hover:scale-110">
-            <Youtube size={24} />
-          </a>
+        {/* Responsive Grid System */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-10 md:gap-8 mb-12">
+          
+          {/* Brand Info - Full width on mobile */}
+          <div className="lg:col-span-1">
+            <div className="flex items-center gap-2 text-yellow-400 font-black text-xl mb-4 italic tracking-tighter">
+              <Bitcoin size={24} className="fill-yellow-400" /> DUBAIP2P
+            </div>
+            <p className="text-sm text-gray-400 leading-relaxed max-w-xs">
+              Dubai's premier peer-to-peer trading engine for secure asset exchange.
+            </p>
+          </div>
+
+          {/* Map through Link Categories: 1 col on mobile, 2 on tablet, 4 on desktop */}
+          {footerLinks.map((category) => (
+            <div key={category.title}>
+              <h4 className="font-black text-yellow-400 mb-5 text-xs uppercase tracking-[0.2em]">
+                {category.title}
+              </h4>
+              <ul className="space-y-3">
+                {category.links.map((link) => (
+                  <li key={link}>
+                    <a href="#" className="text-gray-400 hover:text-white text-sm transition-colors duration-200">
+                      {link}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+
+        {/* Social Links: Larger icons for mobile touch targets */}
+        <div className="border-t border-gray-800 pt-10 flex flex-wrap justify-center gap-8 mb-10">
+          {[
+            { Icon: Twitter, path: "#" },
+            { Icon: Mail, path: "#" },
+            { Icon: MessageCircle, path: "#" },
+            { Icon: Youtube, path: "#" }
+          ].map((social, index) => (
+            <a 
+              key={index}
+              href={social.path} 
+              className="text-gray-500 hover:text-yellow-400 transition-all transform hover:scale-125"
+            >
+              <social.Icon size={24} />
+            </a>
+          ))}
+        </div>
+
+        {/* Bottom Disclaimer: Responsive font scaling */}
+        <div className="text-center space-y-4">
+          <p className="text-[10px] md:text-xs text-gray-600 max-w-3xl mx-auto uppercase font-bold tracking-widest leading-loose">
+            Disclaimer: Trading digital assets involves significant risk. The value of assets can fluctuate and users should trade with caution. DUBAIP2P is not liable for P2P transfer disputes.
+          </p>
+          <div className="h-[1px] w-20 bg-yellow-500/20 mx-auto"></div>
+          <p className="text-[10px] text-gray-500 font-medium">
+            &copy; 2026 DUBAIP2P Global. All rights reserved.
+          </p>
         </div>
       </div>
 
-      {/* Bottom Footer */}
-      <div className="border-t border-yellow-500/20 bg-black/50 px-4 md:px-6 py-4 md:py-6 text-center">
-        <p className="text-xs md:text-sm text-gray-400">&copy; 2026 DUBAIP2P. All rights reserved. | Disclaimer: DUBAIcurrency trading is highly volatile.</p>
-      </div>
+      {/* Decorative Bottom Bar */}
+      <div className="h-1 bg-gradient-to-r from-transparent via-yellow-500/50 to-transparent opacity-30"></div>
     </footer>
   );
 }

@@ -12,7 +12,6 @@ export default function P2PPage() {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
   
-  // States
   const [mode, setMode] = useState('Buy');
   const [type, setType] = useState('BUY');
   const [ads, setAds] = useState([]);
@@ -21,18 +20,12 @@ export default function P2PPage() {
   const [paymentMethod, setPaymentMethod] = useState('');
   const [amount, setAmount] = useState('');
 
-  // Authentication Check
   useEffect(() => {
     if (!isAuthenticated) {
       navigate('/login');
     }
   }, [isAuthenticated, navigate]);
 
-  /**
-   * Fetch Ads Function
-   * useCallback वापरल्यामुळे हे फंक्शन प्रत्येक रेंडरला नवीन तयार होणार नाही, 
-   * ज्यामुळे Infinite Loop टळतो.
-   */
   const fetchAds = useCallback(async () => {
     if (!isAuthenticated) return;
 
@@ -41,7 +34,7 @@ export default function P2PPage() {
       setError('');
       
       const params = {
-        type: type, // 'BUY' or 'SELL'
+        type: type,
         page: 1,
         limit: 20,
       };
@@ -49,9 +42,7 @@ export default function P2PPage() {
       if (paymentMethod) params.paymentMethod = paymentMethod;
       if (amount) params.minAmount = amount;
       
-      console.log('Fetching ads with params:', params);
       const response = await adsAPI.getAds(params);
-      console.log('API Response:', response);
       
       if (response && response.ads) {
         setAds(response.ads);
@@ -62,24 +53,17 @@ export default function P2PPage() {
         setAds([]);
       }
     } catch (err) {
-      console.error('Error fetching ads:', err);
       setError('Error fetching ads: ' + (err.message || 'Network error'));
       setAds([]);
     } finally {
       setLoading(false);
     }
-  }, [isAuthenticated, type, paymentMethod, amount]); // या गोष्टी बदलल्या कीच फंक्शन अपडेट होईल
+  }, [isAuthenticated, type, paymentMethod, amount]);
 
-  /**
-   * Data Fetcher useEffect
-   * हे "Source of Truth" आहे. जेव्हा जेव्हा Filters किंवा Mode बदलेल, 
-   * तेव्हा हे आपोआप fetchAds() ला कॉल करेल.
-   */
   useEffect(() => {
     fetchAds();
   }, [fetchAds]);
 
-  // Handlers - फक्त स्टेट बदला, API कॉल इथून करू नका
   const handleModeChange = (newMode) => {
     setMode(newMode);
     setType(newMode === 'Buy' ? 'BUY' : 'SELL');
@@ -95,38 +79,48 @@ export default function P2PPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-[#f8f9fa]">
       <Header />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
-        {/* Page Title Section */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">P2P Trading</h1>
-          <p className="text-gray-600">Buy and sell USDT safely with verified traders.</p>
+      {/* Main container with responsive padding */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 md:py-8">
+        
+        {/* Responsive Header Section */}
+        <div className="mb-6 md:mb-8">
+          <h1 className="text-2xl md:text-3xl font-black text-gray-900 mb-1 uppercase tracking-tight">
+            P2P Marketplace
+          </h1>
+          <p className="text-gray-500 text-xs md:text-sm font-medium">
+            Secure peer-to-peer USDT trading with local payment methods.
+          </p>
         </div>
 
-        {/* Filters & Tabs Section */}
-        <div className="space-y-6">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <BuySellTabs mode={mode} onModeChange={handleModeChange} />
-            <Filters onFilterChange={handleFilterChange} />
+        {/* Filters & Tabs: Stacks on mobile, row on desktop */}
+        <div className="space-y-4 md:space-y-6">
+          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4 bg-white p-4 rounded-2xl border border-gray-100 shadow-sm">
+            <div className="w-full lg:w-auto">
+              <BuySellTabs mode={mode} onModeChange={handleModeChange} />
+            </div>
+            <div className="w-full lg:w-auto">
+              <Filters onFilterChange={handleFilterChange} />
+            </div>
           </div>
 
-          {/* Error Message Display */}
           {error && (
-            <div className="p-4 bg-red-50 border border-red-200 rounded-xl">
-              <p className="text-red-600 text-sm font-medium">{error}</p>
+            <div className="p-4 bg-red-50 border border-red-100 rounded-2xl flex items-center gap-3">
+              <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+              <p className="text-red-600 text-xs font-bold uppercase tracking-wider">{error}</p>
             </div>
           )}
 
-          {/* Conditional Rendering for Loading or Ads Table */}
           {loading ? (
             <div className="flex flex-col items-center justify-center py-20 gap-4">
-              <div className="w-12 h-12 border-4 border-yellow-500 border-t-transparent rounded-full animate-spin"></div>
-              <p className="text-gray-500 font-medium italic">Finding best offers for you...</p>
+              <div className="w-10 h-10 border-4 border-yellow-500 border-t-transparent rounded-full animate-spin"></div>
+              <p className="text-gray-400 text-[10px] font-black uppercase tracking-[0.2em]">Updating Market...</p>
             </div>
           ) : (
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+            /* AdsTable container removes borders on mobile to save space */
+            <div className="md:bg-white md:rounded-3xl md:shadow-sm md:border md:border-gray-100 overflow-hidden">
               <AdsTable ads={ads} />
             </div>
           )}

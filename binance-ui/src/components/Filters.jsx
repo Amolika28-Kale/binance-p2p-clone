@@ -1,143 +1,112 @@
 import React, { useState, useEffect } from 'react';
-
-import TextField from '@mui/material/TextField'
-import MenuItem from '@mui/material/MenuItem'
+import TextField from '@mui/material/TextField';
+import MenuItem from '@mui/material/MenuItem';
+import { Search, Filter, ChevronDown } from 'lucide-react';
 
 export default function Filters({ onFilterChange = () => {} }) {
-  const [payment, setPayment] = useState('')
-  const [amount, setAmount] = useState('')
-  const [search, setSearch] = useState('')
+  const [payment, setPayment] = useState('');
+  const [amount, setAmount] = useState('');
+  const [search, setSearch] = useState('');
 
-  // Call onFilterChange whenever filters change
+  // Sync state with parent component
   useEffect(() => {
     onFilterChange({
       paymentMethod: payment,
       minAmount: amount,
+      search: search
     });
-  }, [payment, amount, onFilterChange]);
+  }, [payment, amount, search, onFilterChange]);
+
+  const muiStyle = {
+    flex: {
+      flex: { xs: '1 1 100%', sm: '1 1 150px', md: '0 1 200px' },
+    },
+    input: {
+      '& .MuiOutlinedInput-root': {
+        backgroundColor: '#fff',
+        borderRadius: '12px',
+        fontSize: { xs: '12px', md: '14px' },
+        '& fieldset': { borderColor: '#e5e7eb' },
+        '&:hover fieldset': { borderColor: '#d1d5db' },
+        '&.Mui-focused fieldset': { borderColor: '#facc15' },
+      },
+      '& .MuiInputLabel-root': {
+        fontSize: { xs: '12px', md: '14px' },
+        '&.Mui-focused': { color: '#8b8b8b' },
+      },
+    }
+  };
 
   return (
-    <div className="mb-4 md:mb-6 space-y-3 md:space-y-4">
-      {/* Top Filter Bar */}
-      <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-4 bg-white rounded-lg p-2 md:p-3 border border-gray-200 shadow-sm">
-        <div className="flex items-center gap-2 cursor-pointer hover:text-gray-900 transition text-sm md:text-base">
-          <span className="text-gray-700 font-medium">All payment methods</span>
-          <span className="text-gray-400">▼</span>
+    <div className="mb-6 space-y-4">
+      {/* --- Desktop Top Bar (Hidden on Mobile) --- */}
+      <div className="hidden md:flex items-center justify-between bg-white p-2 rounded-2xl border border-gray-100 shadow-sm">
+        <div className="flex gap-6 px-4">
+          <button className="flex items-center gap-2 text-sm font-bold text-gray-500 hover:text-black transition">
+            Payment <ChevronDown size={14} />
+          </button>
+          <button className="flex items-center gap-2 text-sm font-bold text-gray-500 hover:text-black transition">
+            Fiat <ChevronDown size={14} />
+          </button>
         </div>
-        <div className="flex items-center gap-2 md:ml-auto cursor-pointer hover:text-gray-900 transition text-sm md:text-base">
-          <span className="text-gray-700 font-medium">Sort by</span>
-          <span className="text-black font-semibold">Price</span>
-          <span className="text-gray-400">▼</span>
+        <div className="flex items-center gap-4">
+          <span className="text-[10px] font-black text-gray-300 uppercase tracking-widest">Sort By: Price</span>
+          <button className="px-4 py-1.5 bg-gray-50 text-gray-400 rounded-lg text-xs font-black border border-gray-100 uppercase">Refresh Ads</button>
         </div>
-        <button className="md:ml-4 px-3 md:px-4 py-2 bg-white border border-gray-300 rounded text-gray-700 hover:bg-gray-50 transition text-xs md:text-sm font-medium w-full md:w-auto">
-          No Ads
-        </button>
       </div>
 
-      {/* Search and Filters - Responsive Grid */}
-      <div className="grid grid-cols-2 md:flex md:flex-wrap gap-2 md:gap-3">
+      {/* --- Main Filter Grid (Responsive) --- */}
+      <div className="flex flex-wrap gap-3 items-center">
+        
+        {/* Amount Input: Responsive Width */}
         <TextField 
           size="small" 
           label="Amount" 
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
-          variant="outlined"
-          placeholder="Min"
-          sx={{
-            width: 130,
-            '& .MuiOutlinedInput-root': {
-              backgroundColor: '#fff',
-              color: '#000',
-              fontSize: '0.875rem',
-              borderRadius: '6px',
-              '& fieldset': {
-                borderColor: '#d1d5db',
-              },
-              '&:hover fieldset': {
-                borderColor: '#9ca3af',
-              },
-              '&.Mui-focused fieldset': {
-                borderColor: '#000',
-              },
-            },
-            '& .MuiInputBase-input::placeholder': {
-              color: '#9ca3af',
-              opacity: 1,
-            },
-            '& .MuiInputLabel-root': {
-              color: '#6b7280',
-              '&.Mui-focused': {
-                color: '#000',
-              },
-            },
+          placeholder="Min Amount"
+          sx={{ 
+            ...muiStyle.input,
+            width: { xs: '47%', sm: '160px' } // Almost half-width on mobile
           }}
         />
+
+        {/* Payment Selector: Responsive Width */}
         <TextField 
           size="small" 
           select 
           label="Payment" 
           value={payment} 
           onChange={(e) => setPayment(e.target.value)}
-          sx={{
-            width: 140,
-            '& .MuiOutlinedInput-root': {
-              backgroundColor: '#fff',
-              color: '#000',
-              '& fieldset': {
-                borderColor: '#d1d5db',
-              },
-              '&:hover fieldset': {
-                borderColor: '#9ca3af',
-              },
-              '&.Mui-focused fieldset': {
-                borderColor: '#000',
-              }
-            },
-            '& .MuiInputLabel-root': {
-              color: '#6b7280',
-              '&.Mui-focused': {
-                color: '#000',
-              },
-            },
+          sx={{ 
+            ...muiStyle.input,
+            width: { xs: '47%', sm: '180px' } // Almost half-width on mobile
           }}
         >
-          <MenuItem value="">All</MenuItem>
+          <MenuItem value="">All Payments</MenuItem>
           <MenuItem value="UPI">UPI</MenuItem>
-          <MenuItem value="Bank Transfer">Bank Transfer</MenuItem>
-          <MenuItem value="Card">Card</MenuItem>
-          <MenuItem value="PayPal">PayPal</MenuItem>
+          <MenuItem value="BANK">Bank Transfer</MenuItem>
+          <MenuItem value="PAYTM">Paytm</MenuItem>
         </TextField>
+
+        {/* Search Bar: Full width on mobile, fills remaining space on desktop */}
         <TextField 
           size="small" 
-          label="Search advertiser" 
+          label="Search User" 
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          variant="outlined"
-          sx={{
-            flex: 1,
-            minWidth: 200,
-            '& .MuiOutlinedInput-root': {
-              backgroundColor: '#fff',
-              color: '#000',
-              '& fieldset': {
-                borderColor: '#d1d5db',
-              },
-              '&:hover fieldset': {
-                borderColor: '#9ca3af',
-              },
-              '&.Mui-focused fieldset': {
-                borderColor: '#000',
-              }
-            },
-            '& .MuiInputLabel-root': {
-              color: '#6b7280',
-              '&.Mui-focused': {
-                color: '#000',
-              },
-            },
+          placeholder="Enter nickname..."
+          sx={{ 
+            ...muiStyle.input,
+            flex: { xs: '1 1 100%', sm: '1 1 200px', md: '1' } 
           }}
         />
+
+        {/* Mobile-only Filter Toggle (Optional visual element) */}
+        <button className="md:hidden w-full py-3 bg-gray-50 border border-gray-100 rounded-xl flex items-center justify-center gap-2 text-[10px] font-black uppercase text-gray-500 tracking-widest">
+          <Filter size={14} /> More Filters
+        </button>
       </div>
     </div>
-  )
+  );
 }

@@ -1,5 +1,8 @@
 // API Configuration
 export const API_BASE_URL = 'https://binance-p2p-clone.onrender.com/api';
+// export const API_BASE_URL = 'http://localhost:5000/api'; // Local development URL
+
+
 
 // Helper function to get auth token
 export const getToken = () => {
@@ -169,22 +172,24 @@ export const tradesAPI = {
     return response.json();
   },
 
-  getMyTrades: async (filters = {}) => {
+getMyTrades: async (filters = {}) => {
     const queryParams = new URLSearchParams();
     
     if (filters.status) queryParams.append('status', filters.status);
     if (filters.page) queryParams.append('page', filters.page);
     if (filters.limit) queryParams.append('limit', filters.limit);
 
+    // CRITICAL: Include ...getAuthHeader() in the headers
     const response = await fetch(`${API_BASE_URL}/trades/my-trades?${queryParams}`, {
+      method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        ...getAuthHeader(),
+        ...getAuthHeader(), // This attaches the Bearer Token
       },
     });
+    
     return response.json();
   },
-
   getTradeById: async (id) => {
     const response = await fetch(`${API_BASE_URL}/trades/${id}`, {
       headers: {

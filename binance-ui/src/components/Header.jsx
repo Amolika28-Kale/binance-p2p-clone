@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Menu, X, Bitcoin, TrendingUp, Book, Lock, LogOut, User, BarChart3, Repeat2 } from 'lucide-react';
+import { 
+  Menu, X, Bitcoin, LogOut, User, Repeat2, PlusSquare, LayoutList, 
+  Wallet, ChevronDown
+} from 'lucide-react';
 
 export default function Header() {
   const navigate = useNavigate();
@@ -19,208 +22,161 @@ export default function Header() {
     setShowMobileMenu(false);
   };
 
+  const navLinks = [
+    { name: 'Market', path: '/p2p' },
+    { name: 'My Trades', path: '/trades' },
+    { name: 'My Ads', path: '/my-ads' },
+  ];
+
   return (
-    <header className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
-      {/* Top Navigation - Hide on Mobile */}
-      <div className="hidden md:flex bg-gradient-to-r from-gray-50 to-blue-50 border-b border-gray-200 text-sm text-gray-700">
-        <div className="max-w-full px-4 md:px-6 py-2 flex justify-between items-center w-full">
-          <div className="flex gap-4 md:gap-6">
-            <button onClick={() => navigate('/')} className="hover:text-yellow-500 transition cursor-pointer font-medium text-xs md:text-sm">DUBAI Prices</button>
-            <button onClick={() => navigate('/p2p')} className="hover:text-yellow-500 transition cursor-pointer font-medium text-xs md:text-sm">P2P Trading</button>
-            <button className="hover:text-yellow-500 transition cursor-pointer font-medium text-xs md:text-sm">Learning Hub</button>
-            <button className="hover:text-yellow-500 transition cursor-pointer font-medium text-xs md:text-sm">Security</button>
+    <header className="bg-white border-b border-gray-100 sticky top-0 z-50 shadow-sm font-sans">
+      {/* Top Nav (Desktop Only) */}
+      <div className="hidden md:flex bg-gray-50/50 border-b border-gray-100 text-[10px] uppercase tracking-widest font-black text-gray-500">
+        <div className="max-w-7xl mx-auto px-6 py-2 flex justify-between items-center w-full">
+          <div className="flex gap-6">
+            <button onClick={() => navigate('/')} className="hover:text-yellow-600 transition">Dubai Prices</button>
+            <button onClick={() => navigate('/p2p')} className="hover:text-yellow-600 transition">P2P Marketplace</button>
           </div>
-          <div className="flex gap-4 md:gap-6">
-            <button className="hover:text-yellow-500 transition cursor-pointer text-xs md:text-sm">English</button>
-            <button className="hover:text-yellow-500 transition cursor-pointer text-xs md:text-sm">USD</button>
-            <button className="hover:text-yellow-500 transition cursor-pointer"><Lock size={16} /></button>
+          <div className="flex gap-4 items-center">
+            <span className="bg-gray-200 h-3 w-[1px]"></span>
+            <span>English / INR</span>
           </div>
         </div>
       </div>
 
-      {/* Main Header */}
-      <div className="max-w-full px-4 md:px-6 py-3 md:py-4 flex justify-between items-center">
-        {/* Logo */}
-        <button onClick={() => navigate('/')} className="flex items-center gap-2 text-xl md:text-2xl font-bold hover:opacity-80 transition">
-          <Bitcoin size={28} className="text-yellow-500" />
-          <span className="bg-gradient-to-r from-yellow-500 to-orange-500 bg-clip-text text-transparent hidden sm:inline">DUBAIP2P</span>
-          <span className="bg-gradient-to-r from-yellow-500 to-orange-500 bg-clip-text text-transparent sm:hidden">C2P</span>
-        </button>
+      {/* Main Header Container */}
+      <div className="max-w-7xl mx-auto px-4 md:px-6 py-3 flex justify-between items-center">
         
-        {/* Desktop Navigation */}
-        <nav className="hidden lg:flex gap-6 text-sm font-medium text-gray-600">
-          <button 
-            onClick={() => navigate('/')}
-            className={`flex items-center gap-1 transition ${isActive('/') ? 'text-black border-b-2 border-yellow-400 pb-1' : 'hover:text-yellow-500'}`}
-          >
-            <TrendingUp size={18} /> Buy DUBAI
+        {/* Left: Logo and Desktop Nav */}
+        <div className="flex items-center gap-8">
+          <button onClick={() => navigate('/')} className="flex items-center gap-2 group">
+            <Bitcoin size={28} className="text-yellow-500 fill-yellow-500 group-hover:rotate-12 transition-transform" />
+            <h1 className="text-lg md:text-xl font-black tracking-tighter text-black uppercase">
+              Dubai<span className="text-yellow-500">P2P</span>
+            </h1>
           </button>
-          <button 
-            onClick={() => navigate('/p2p')}
-            className={`flex items-center gap-1 transition ${isActive('/p2p') ? 'text-black border-b-2 border-yellow-400 pb-1' : 'hover:text-yellow-500'}`}
-          >
-            <Repeat2 size={18} /> P2P Trading
-          </button>
-          <button className="flex items-center gap-1 hover:text-yellow-500 transition">
-            <BarChart3 size={18} /> Market
-          </button>
-          <button className="flex items-center gap-1 hover:text-yellow-500 transition">
-            <Book size={18} /> Learn
-          </button>
-        </nav>
+          
+          {/* Desktop Links (Hidden below LG) */}
+          <nav className="hidden lg:flex gap-6 text-sm font-bold text-gray-500">
+            {navLinks.map((link) => (
+              <button 
+                key={link.path}
+                onClick={() => navigate(link.path)} 
+                className={`hover:text-yellow-500 transition-colors ${isActive(link.path) ? 'text-black' : ''}`}
+              >
+                {link.name}
+              </button>
+            ))}
+            <button onClick={() => navigate('/post-ad')} className="text-yellow-600 hover:text-yellow-700 transition-colors">+ Post Ad</button>
+          </nav>
+        </div>
 
-        {/* Right Side - Auth & Mobile Menu */}
+        {/* Right: User Actions & Mobile Toggle */}
         <div className="flex items-center gap-2 md:gap-4">
-          {/* Desktop Auth Buttons */}
-          <div className="hidden sm:flex items-center gap-4">
-            {isAuthenticated && user ? (
-              <div className="relative">
-                <button 
-                  onClick={() => setShowUserMenu(!showUserMenu)}
-                  className="px-3 md:px-4 py-2 text-xs md:text-sm font-semibold text-black bg-gray-100 hover:bg-gray-200 rounded flex items-center gap-2 transition"
-                >
-                  <User size={18} /> {user.firstName || 'User'}
-                </button>
-                
-                {showUserMenu && (
-                  <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
+          {isAuthenticated && user ? (
+            <div className="relative">
+              <button 
+                onClick={() => setShowUserMenu(!showUserMenu)}
+                className="flex items-center gap-2 bg-gray-50 hover:bg-gray-100 px-3 py-1.5 md:px-4 md:py-2 rounded-full transition border border-gray-100"
+              >
+                <div className="w-5 h-5 md:w-6 md:h-6 bg-yellow-400 rounded-full flex items-center justify-center text-[9px] md:text-[10px] font-black shadow-sm">
+                  {user.firstName ? user.firstName[0].toUpperCase() : 'U'}
+                </div>
+                <span className="hidden sm:inline text-xs md:text-sm font-bold text-black">{user.firstName}</span>
+                <ChevronDown size={14} className={`text-gray-400 transition-transform ${showUserMenu ? 'rotate-180' : ''}`} />
+              </button>
+              
+              {/* Desktop User Dropdown */}
+              {showUserMenu && (
+                <div className="absolute right-0 mt-3 w-64 bg-white border border-gray-100 rounded-2xl shadow-2xl z-[100] overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+                  <div className="p-5 bg-gray-50/80 border-b border-gray-100">
+                    <p className="text-[10px] text-gray-400 uppercase font-black tracking-widest mb-1">Authenticated Account</p>
+                    <p className="text-sm font-black truncate text-black">{user.email}</p>
+                  </div>
+                  
+                  <div className="py-2 p-2">
+                    {[
+                      { name: 'My Profile', path: '/profile', icon: User },
+                      { name: 'Assets & Wallet', path: '/wallet', icon: Wallet },
+                      { name: 'Manage My Ads', path: '/my-ads', icon: LayoutList },
+                      { name: 'Order History', path: '/trades', icon: Repeat2 },
+                    ].map((item) => (
+                      <button 
+                        key={item.path}
+                        onClick={() => { navigate(item.path); setShowUserMenu(false); }} 
+                        className="w-full text-left px-4 py-3 text-sm hover:bg-yellow-50 rounded-xl flex items-center gap-3 transition-colors font-bold text-gray-700"
+                      >
+                        <item.icon size={18} className="text-gray-400" /> {item.name}
+                      </button>
+                    ))}
                     <button 
-                      onClick={() => {
-                        navigate('/profile');
-                        setShowUserMenu(false);
-                      }}
-                      className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 border-b flex items-center gap-2"
+                      onClick={() => { navigate('/post-ad'); setShowUserMenu(false); }} 
+                      className="w-full text-left px-4 py-3 text-sm hover:bg-yellow-50 rounded-xl flex items-center gap-3 transition-colors text-yellow-600 font-black mt-1"
                     >
-                      <User size={16} /> My Profile
-                    </button>
-                    <button 
-                      onClick={() => {
-                        navigate('/my-ads');
-                        setShowUserMenu(false);
-                      }}
-                      className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 border-b flex items-center gap-2"
-                    >
-                      <BarChart3 size={16} /> My Ads
-                    </button>
-                    <button 
-                      onClick={() => {
-                        navigate('/trades');
-                        setShowUserMenu(false);
-                      }}
-                      className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 border-b flex items-center gap-2"
-                    >
-                      <Repeat2 size={16} /> My Trades
-                    </button>
-                    <button 
-                      onClick={handleLogout}
-                      className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 font-semibold flex items-center gap-2"
-                    >
-                      <LogOut size={16} /> Log Out
+                      <PlusSquare size={18} /> Post New Ad
                     </button>
                   </div>
-                )}
-              </div>
-            ) : (
-              <>
-                <button 
-                  onClick={() => navigate('/login')}
-                  className="px-4 py-2 text-sm font-semibold text-black hover:bg-gray-100 rounded transition"
-                >
-                  Log In
-                </button>
-                <button 
-                  onClick={() => navigate('/signup')}
-                  className="px-4 py-2 text-sm font-semibold text-white bg-yellow-400 hover:bg-yellow-500 rounded transition"
-                >
-                  Sign Up
-                </button>
-              </>
-            )}
-          </div>
 
-          {/* Mobile Menu Button */}
+                  <button onClick={handleLogout} className="w-full text-left px-6 py-4 text-sm text-red-600 hover:bg-red-50 font-black border-t border-gray-100 flex items-center gap-3 transition-colors">
+                    <LogOut size={18} /> Log Out
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="flex items-center gap-1 md:gap-3">
+              <button onClick={() => navigate('/login')} className="px-3 py-2 text-xs md:text-sm font-bold text-gray-600 hover:text-black">Log In</button>
+              <button onClick={() => navigate('/signup')} className="px-4 py-2 text-xs md:text-sm font-black bg-yellow-400 rounded-xl hover:bg-yellow-500 shadow-lg shadow-yellow-500/20 transition-all active:scale-95">Sign Up</button>
+            </div>
+          )}
+          
+          {/* Mobile Menu Toggle */}
           <button 
-            onClick={() => setShowMobileMenu(!showMobileMenu)}
-            className="lg:hidden p-2 hover:bg-gray-100 rounded transition"
+            onClick={() => setShowMobileMenu(!showMobileMenu)} 
+            className="lg:hidden p-2 text-black hover:bg-gray-100 rounded-lg transition-colors"
           >
             {showMobileMenu ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
       </div>
 
-      {/* Mobile Menu */}
+      {/* Mobile Menu Overlay */}
       {showMobileMenu && (
-        <div className="lg:hidden bg-gray-50 border-t border-gray-200 p-4 space-y-4">
-          <nav className="space-y-2">
+        <div className="lg:hidden fixed inset-0 top-[57px] md:top-[90px] bg-white z-[90] p-6 animate-in slide-in-from-right duration-300">
+          <nav className="flex flex-col gap-2">
+            <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-4">Main Menu</p>
+            {navLinks.map((link) => (
+              <button 
+                key={link.path}
+                onClick={() => { navigate(link.path); setShowMobileMenu(false); }} 
+                className={`text-left text-lg font-black py-4 border-b border-gray-50 flex justify-between items-center ${isActive(link.path) ? 'text-yellow-600' : 'text-black'}`}
+              >
+                {link.name}
+                <ChevronDown size={20} className="-rotate-90 text-gray-300" />
+              </button>
+            ))}
             <button 
-              onClick={() => {
-                navigate('/');
-                setShowMobileMenu(false);
-              }}
-              className={`w-full text-left px-4 py-2 rounded flex items-center gap-2 transition ${isActive('/') ? 'bg-yellow-100 text-black font-semibold' : 'text-gray-700 hover:bg-gray-100'}`}
+              onClick={() => { navigate('/post-ad'); setShowMobileMenu(false); }} 
+              className="text-left text-lg font-black py-4 border-b border-gray-50 text-yellow-600"
             >
-              <TrendingUp size={18} /> Buy DUBAI
+              Post an Ad
             </button>
             <button 
-              onClick={() => {
-                navigate('/p2p');
-                setShowMobileMenu(false);
-              }}
-              className={`w-full text-left px-4 py-2 rounded flex items-center gap-2 transition ${isActive('/p2p') ? 'bg-yellow-100 text-black font-semibold' : 'text-gray-700 hover:bg-gray-100'}`}
+              onClick={() => { navigate('/profile'); setShowMobileMenu(false); }} 
+              className="text-left text-lg font-black py-4 flex justify-between items-center"
             >
-              <Repeat2 size={18} /> P2P Trading
-            </button>
-            <button className="w-full text-left px-4 py-2 rounded flex items-center gap-2 text-gray-700 hover:bg-gray-100 transition">
-              <BarChart3 size={18} /> Market
-            </button>
-            <button className="w-full text-left px-4 py-2 rounded flex items-center gap-2 text-gray-700 hover:bg-gray-100 transition">
-              <Book size={18} /> Learn
+              Profile & Assets
+              <Wallet size={20} className="text-gray-400" />
             </button>
           </nav>
-
-          {/* Mobile Auth */}
-          <div className="border-t border-gray-200 pt-4 space-y-2">
-            {isAuthenticated && user ? (
-              <>
-                <button 
-                  onClick={() => {
-                    navigate('/profile');
-                    setShowMobileMenu(false);
-                  }}
-                  className="w-full px-4 py-2 text-sm font-semibold text-white bg-yellow-400 hover:bg-yellow-500 rounded flex items-center justify-center gap-2 transition"
-                >
-                  <User size={18} /> {user.firstName || 'User'}
-                </button>
-                <button 
-                  onClick={handleLogout}
-                  className="w-full px-4 py-2 text-sm font-semibold text-red-600 border border-red-300 rounded flex items-center justify-center gap-2 hover:bg-red-50 transition"
-                >
-                  <LogOut size={18} /> Log Out
-                </button>
-              </>
-            ) : (
-              <>
-                <button 
-                  onClick={() => {
-                    navigate('/login');
-                    setShowMobileMenu(false);
-                  }}
-                  className="w-full px-4 py-2 text-sm font-semibold text-black border border-gray-300 rounded hover:bg-gray-100 transition"
-                >
-                  Log In
-                </button>
-                <button 
-                  onClick={() => {
-                    navigate('/signup');
-                    setShowMobileMenu(false);
-                  }}
-                  className="w-full px-4 py-2 text-sm font-semibold text-white bg-yellow-400 hover:bg-yellow-500 rounded transition"
-                >
-                  Sign Up
-                </button>
-              </>
-            )}
-          </div>
+          
+          {isAuthenticated && (
+            <div className="mt-8 pt-8 border-t border-gray-100">
+              <button onClick={handleLogout} className="w-full py-4 bg-red-50 text-red-600 font-black rounded-2xl flex items-center justify-center gap-3">
+                <LogOut size={20} /> Log Out
+              </button>
+            </div>
+          )}
         </div>
       )}
     </header>

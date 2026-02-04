@@ -104,19 +104,25 @@ exports.getMyTrades = async (req, res) => {
 };
 
 // Get trade by ID
+// controllers/tradeController.js
+
 exports.getTradeById = async (req, res) => {
   try {
     const trade = await Trade.findById(req.params.id)
-      .populate('buyer seller', 'firstName lastName email phoneNumber paymentMethods')
+      .populate('buyer seller', 'firstName lastName email phoneNumber paymentMethods upiId')
       .populate('ad');
 
     if (!trade) {
-      return res.status(404).json({ message: 'Trade not found' });
+      return res.status(404).json({ success: false, message: 'Trade not found' });
     }
 
-    // Check authorization
-    if (trade.buyer.toString() !== req.userId && trade.seller.toString() !== req.userId) {
-      return res.status(403).json({ message: 'Not authorized to view this trade' });
+    // FIX: Convert both to strings for a reliable comparison
+    const currentUserId = req.userId.toString();
+    const buyerId = trade.buyer._id ? trade.buyer._id.toString() : trade.buyer.toString();
+    const sellerId = trade.seller._id ? trade.seller._id.toString() : trade.seller.toString();
+
+    if (currentUserId !== buyerId && currentUserId !== sellerId) {
+      return res.status(403).json({ success: false, message: 'Not authorized to view this trade' });
     }
 
     res.status(200).json({
@@ -124,7 +130,7 @@ exports.getTradeById = async (req, res) => {
       trade
     });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
