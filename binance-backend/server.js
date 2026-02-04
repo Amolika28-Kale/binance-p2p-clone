@@ -11,7 +11,7 @@ connectDB();
 // CORS Configuration - Must be before routes
 const corsOptions = {
   origin: function(origin, callback) {
-    const allowedOrigins = ['http://localhost:5173', 'http://localhost:5174', 'http://localhost:5175'];
+    const allowedOrigins = ['http://localhost:5173', 'http://localhost:5174', 'http://localhost:5175' ,"https://binanceclonesite.netlify.app/"];
     
     // Allow requests with no origin (like mobile apps or curl requests)
     if (!origin || allowedOrigins.indexOf(origin) !== -1) {

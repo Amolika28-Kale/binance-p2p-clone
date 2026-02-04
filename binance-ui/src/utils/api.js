@@ -1,5 +1,5 @@
 // API Configuration
-export const API_BASE_URL = 'http://localhost:5000/api';
+export const API_BASE_URL = 'https://binance-p2p-clone.onrender.com/api';
 
 // Helper function to get auth token
 export const getToken = () => {
