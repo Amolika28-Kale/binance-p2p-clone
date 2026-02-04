@@ -22,7 +22,7 @@ connectDB();
 // CORS Configuration
 const corsOptions = {
   origin: function(origin, callback) {
-    const allowedOrigins = ['http://localhost:5173', 'http://localhost:5174', 'http://localhost:5175', "https://binanceclonesite.netlify.app"];
+    const allowedOrigins = ['http://localhost:5173', 'http://localhost:5174', 'http://localhost:5175', "https://binanceclonesite.netlify.app", "https://dubaip2p.netlify.app"];
     if (!origin || allowedOrigins.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
